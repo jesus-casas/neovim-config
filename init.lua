@@ -159,15 +159,13 @@ require("lazy").setup({
     "neovim/nvim-lspconfig",
     dependencies = { "williamboman/mason.nvim" },
     config = function()
-      -- Setup common LSP servers
-      -- Using require('lspconfig') with individual server setup to minimize deprecation warnings
-      -- The deprecation warning is informational until nvim-lspconfig v3.0.0
-      local lspconfig = require("lspconfig")
-      
-      lspconfig.lua_ls.setup({})
-      lspconfig.ts_ls.setup({}) -- Updated from tsserver
-      lspconfig.pyright.setup({})
-      lspconfig.bashls.setup({})
+      -- Setup common LSP servers using new vim.lsp.config() API (Nvim 0.11+)
+      -- Migration from require('lspconfig') to vim.lsp.config()
+      -- Format: vim.lsp.config(server_name, config_table)
+      vim.lsp.config("lua_ls", {})
+      vim.lsp.config("ts_ls", {}) -- Updated from tsserver
+      vim.lsp.config("pyright", {})
+      vim.lsp.config("bashls", {})
 
       -- Keybindings for LSP
       vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover documentation" })
