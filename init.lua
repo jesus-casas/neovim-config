@@ -9,6 +9,13 @@ vim.g.mapleader = " "
 -- Enable syntax highlighting (Treesitter will override this for supported filetypes)
 vim.cmd("syntax on")
 
+-- Window navigation keybindings (easier than Ctrl+w)
+vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Move to bottom window" })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move to top window" })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
+vim.keymap.set("n", "<leader>w", "<C-w>w", { desc = "Cycle through windows" })
+
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -267,6 +274,69 @@ require("lazy").setup({
           show_start = true,
         },
       })
+    end,
+  },
+
+  -- ToggleTerm (Integrated Terminal - like VS Code)
+  {
+    "akinsho/toggleterm.nvim",
+    version = "*",
+    config = function()
+      require("toggleterm").setup({
+        size = 20,
+        open_mapping = "<C-\\>",
+        hide_numbers = true,
+        shade_filetypes = {},
+        shade_terminals = true,
+        shading_factor = 2,
+        start_in_insert = true,
+        insert_mappings = true,
+        persist_size = true,
+        direction = "horizontal",
+        close_on_exit = true,
+        shell = vim.o.shell,
+        float_opts = {
+          border = "curved",
+          winblend = 0,
+          highlights = {
+            border = "Normal",
+            background = "Normal",
+          },
+        },
+      })
+
+      -- Keybindings for terminals
+      local Terminal = require("toggleterm.terminal").Terminal
+      
+      -- ESC to exit terminal mode and return to normal mode
+      vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+      
+      -- Main terminal (toggle with <C-\>)
+      vim.keymap.set("n", "<leader>tt", "<Cmd>ToggleTerm<CR>", { desc = "Toggle terminal" })
+      vim.keymap.set("t", "<C-\\>", "<Cmd>ToggleTerm<CR>", { desc = "Toggle terminal" })
+      
+      -- Create numbered terminals (terminal 1, 2, 3, etc.)
+      vim.keymap.set("n", "<leader>t1", function()
+        Terminal:new({ id = 1, direction = "horizontal" }):toggle()
+      end, { desc = "Toggle terminal 1" })
+      
+      vim.keymap.set("n", "<leader>t2", function()
+        Terminal:new({ id = 2, direction = "horizontal" }):toggle()
+      end, { desc = "Toggle terminal 2" })
+      
+      vim.keymap.set("n", "<leader>t3", function()
+        Terminal:new({ id = 3, direction = "horizontal" }):toggle()
+      end, { desc = "Toggle terminal 3" })
+      
+      -- Floating terminal
+      vim.keymap.set("n", "<leader>tf", function()
+        Terminal:new({ direction = "float" }):toggle()
+      end, { desc = "Toggle floating terminal" })
+      
+      -- Vertical split terminal
+      vim.keymap.set("n", "<leader>tv", function()
+        Terminal:new({ direction = "vertical", size = 50 }):toggle()
+      end, { desc = "Toggle vertical terminal" })
     end,
   },
 
